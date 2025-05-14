@@ -31,8 +31,9 @@ set title "отображает название файла вверху окн�
 "mappings
 map <Leader> <Plug>(easymotion-prefix)
 
-" exit to normal mode with 'jj'
-inoremap jj <ESC>
+" enter to normal mode with 'jj'
+" inoremap jj <ESC>
+" Deleted. To enter normal mode, use 'Ctrl+['
 
 " ugly hack to start newline and keep indent
 nnoremap o ox<BS>
