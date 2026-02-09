@@ -1,0 +1,52 @@
+# =========================
+# clangd fallback config
+# =========================
+
+CompileFlags:
+  Add:
+    - -std=c++20
+    - -Wall
+    - -Wextra
+    - -Wpedantic
+    - -Wshadow
+    - -Wconversion
+    - -Wsign-conversion
+
+    # стандартные include-пути проекта
+    - -Iinclude
+    - -I./include
+    - -I../include
+
+  Remove:
+    - -Werror
+
+# -------------------------
+Diagnostics:
+  # строже к include'ам
+  UnusedIncludes: Strict
+
+  # шумные, но не критичные варнинги — оставляем как warnings
+  ClangTidy:
+    Add:
+      - bugprone-*
+      - performance-*
+      - modernize-*
+      - readability-*
+      - cppcoreguidelines-*
+      - cert-*
+    Remove:
+      - cppcoreguidelines-owning-memory
+      - cppcoreguidelines-pro-bounds-pointer-arithmetic
+      - readability-magic-numbers
+
+# -------------------------
+Completion:
+  AllScopes: true        # подсказывать символы не только из текущего scope
+  DetailedLabel: true    # типы, сигнатуры
+  FilterAndSort: true    # нормальный UX
+  CaseSensitive: false
+
+# -------------------------
+Hover:
+  ShowAKA: true          # показывать typedef / using
+  

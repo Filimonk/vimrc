@@ -18,3 +18,11 @@ cp -f "$templates_dir"/.clang-format .
       echo ""
   fi
 
+cp -f "$templates_dir"/.clangd .
+  if [[ "$?" -ne 0 ]]; then
+      echo ""
+      echo "Команда init-clangd:"
+      echo "Ошибка во время копирования шаблонного .clangd"
+      echo ""
+  fi
+
