@@ -64,6 +64,7 @@ nnoremap K  :LspHover<CR>
     " LSP actions
 nnoremap <leader>r :LspRename<CR>
 nnoremap <leader>a :LspCodeAction<CR>
+nnoremap <leader>f :LspDocumentFormat<CR>
     " LSP diagnostics
 nnoremap <leader>e :LspNextDiagnostic<CR>
 nnoremap <leader>E :LspPreviousDiagnostic<CR>
