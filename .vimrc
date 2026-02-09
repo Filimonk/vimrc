@@ -6,6 +6,13 @@ Plug 'jiangmiao/auto-pairs'
 
 Plug 'easymotion/vim-easymotion'
 
+" LSP core
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+
+" Online man
+Plug 'thinca/vim-ref'
+
 "colorschemes
 Plug 'morhetz/gruvbox'
 
@@ -27,6 +34,64 @@ set cindent
 set list lcs=tab:\|\
 
 set title "отображает название файла вверху окна
+
+" completion sets
+set completeopt=menuone
+    " ctags -R . 
+    " создаст нам tags файл, после перезагрузки файла они подсосуться и можно будет
+    " переходить <C-]> и выходить <C-t>
+set tags=./tags;,tags;
+    " Include paths for <C-x><C-i>
+set path+=**
+set path+=../include/**
+    " Spell (only on demand via <C-x><C-k>)
+set dictionary+=/usr/share/dict/words
+  " Затычка, эти словари взял https://github.com/psliwka/vim-dirtytalk/tree/master
+let &dictionary .= "," . join(glob("~/.vim/dict/*", 0, 1), ",")
+    " Use LSP for omni-completion
+set omnifunc=lsp#complete
+
+
+" LSP settings
+    " Серенькая полоска слева всегда отображается
+set signcolumn=yes
+    " LSP navigation
+nnoremap gd :LspDefinition<CR>
+nnoremap gD :LspDeclaration<CR>
+nnoremap gr :LspReferences<CR>
+    " LSP info
+nnoremap K  :LspHover<CR>
+    " LSP actions
+nnoremap <leader>r :LspRename<CR>
+nnoremap <leader>a :LspCodeAction<CR>
+    " LSP diagnostics
+nnoremap <leader>e :LspNextDiagnostic<CR>
+nnoremap <leader>E :LspPreviousDiagnostic<CR>
+nnoremap <leader>d :LspDocumentDiagnostics<CR>
+let g:lsp_diagnostics_enabled = 1
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_diagnostics_highlights_enabled = 1
+  " Функция для перехода к текущей строке в зависимости от типа списка (после gr или <leader>q)
+function! SmartJumpToChosenOpt()
+    let win_info = getwininfo(win_getid())[0]
+    if win_info.loclist
+        execute ".:ll"
+    elseif win_info.quickfix
+        execute ".:cc"
+    else
+        echo "Это не loclist или quickfix окно"
+    endif
+endfunction
+  " Переходить на выбранный вариант в quickfix или loclist
+nnoremap <silent> g<CR> :call SmartJumpToChosenOpt()<CR>
+
+
+" Устанавливаем cppreference.com как основной источник для C++
+let g:ref_source_web = 'cppreference'
+let g:ref_source_web_url_cpp = 'https://en.cppreference.com/w/cpp/'
+" Клавиша для быстрого поиска
+nmap <Leader>k <Plug>(ref-keyword)
+
 
 "mappings
 map <Leader> <Plug>(easymotion-prefix)
