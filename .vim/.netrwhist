@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/home/filimon/.vim'
+let g:netrw_dirhist_0='/home/filimon/trash/test/src'
+let g:netrw_dirhist_9='/home/filimon/trash/test'
+let g:netrw_dirhist_8='/home/filimon/Arduino/sketch_sep19a'
+let g:netrw_dirhist_7='/home/filimon/fzon/services/postgresql/schemas'
+let g:netrw_dirhist_6='/home/filimon/fzon/services/postgresql'
+let g:netrw_dirhist_5='/home/filimon/fzon/services/postgresql/schemas'
+let g:netrw_dirhist_4='/home/filimon/fzon/services/orderservice/src'
+let g:netrw_dirhist_3='/home/filimon/fzon/services/postgresql/schemas'
+let g:netrw_dirhist_2='/home/filimon/fzon/services/cartservice/src'

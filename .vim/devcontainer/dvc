@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -e
+
+DEVCONTAINER_FILE=".devcontainer/devcontainer.json"
+
+if [ ! -f "$DEVCONTAINER_FILE" ]; then
+  echo "No .devcontainer/devcontainer.json found"
+  exit 1
+fi
+
+BASE_IMAGE=$(jq -r '.image' "$DEVCONTAINER_FILE")
+REMOTE_USER=$(jq -r '.remoteUser // "user"' "$DEVCONTAINER_FILE")
+[[ "$REMOTE_USER" == "null" || -z "$REMOTE_USER" ]] && REMOTE_USER="user"
+
+if [ "$BASE_IMAGE" = "null" ]; then
+  echo "No 'image' field found in devcontainer.json"
+  exit 1
+fi
+
+TMP_DIR=$(mktemp -d)
+
+cp ~/.vim/devcontainer/Dockerfile.extend "$TMP_DIR/"
+
+# Генерируем новый devcontainer.json
+jq \
+  --arg baseImage "$BASE_IMAGE" \
+  --arg remoteUser "$REMOTE_USER" \
+  '
+  del(.image)
+  + {
+      build: {
+        dockerfile: "'$TMP_DIR'/Dockerfile.extend",
+        args: {
+          BASE_IMAGE: $baseImage
+        }
+      },
+      mounts: (
+        (.mounts // []) + [
+          "source=${localEnv:HOME}/.vim/ls-settings/clangd-config/.config,target=/home/'$REMOTE_USER'/.config,type=bind,readonly",
+          "source=${localEnv:HOME}/.vim/ls-settings/clangd-config/.clang-format,target=/home/'$REMOTE_USER'/.clang-format,type=bind,readonly",
+          "source=${localEnv:HOME}/.vim/ls-settings/clangd-config/.clang-tidy,target=/home/'$REMOTE_USER'/.clang-tidy,type=bind,readonly",
+          
+          "source=${localEnv:HOME}/.vimrc,target=/home/'$REMOTE_USER'/.vimrc,type=bind,readonly",
+          "source=${localEnv:HOME}/.vim,target=/home/'$REMOTE_USER'/.vim,type=bind,readonly",
+          
+          "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+        ]
+      ),
+      containerEnv: (
+          (.containerEnv // {}) + {
+             "TERM": "${localEnv:TERM}"
+          }
+      ),
+      runArgs: (
+        (.runArgs // []) + [
+          "-p", "8080:8080"
+        ]
+      ),
+      onCreateCommand: (
+        if .onCreateCommand then
+          .onCreateCommand + " && cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        else
+          "cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        end
+      )
+    }
+  ' \
+  "$DEVCONTAINER_FILE" > "$TMP_DIR/devcontainer.json"
+
+ls "$TMP_DIR" -a
+cat "$TMP_DIR/devcontainer.json"
+
+devcontainer up \
+  --workspace-folder . \
+  --config "$TMP_DIR/devcontainer.json"
+
+echo ""
+echo -e "\033[0;32mDevcontainer successfuly started:\033[0m"
+echo ""
+
+devcontainer exec \
+  --workspace-folder . \
+  --config "$TMP_DIR/devcontainer.json" \
+  bash
+

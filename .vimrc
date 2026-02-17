@@ -48,11 +48,11 @@ set path+=../include/**
 set dictionary+=/usr/share/dict/words
   " Затычка, эти словари взял https://github.com/psliwka/vim-dirtytalk/tree/master
 let &dictionary .= "," . join(glob("~/.vim/dict/*", 0, 1), ",")
-    " Use LSP for omni-completion
-set omnifunc=lsp#complete
 
 
 " LSP settings
+    " Use LSP for omni-completion
+set omnifunc=lsp#complete
     " Серенькая полоска слева всегда отображается
 set signcolumn=yes
     " LSP navigation
