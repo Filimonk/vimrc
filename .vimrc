@@ -110,6 +110,11 @@ if executable('yaml-language-server')
         \ })
 endif
 
+" Codeium settings
+" let g:codeium_port_config = { 'web_server': 42101, 'chat_client': 42102 }
+" let g:codeium_port_config = { 'web_server': 42101 }
+" let g:codeium_port_config = { 'chat_client': 42102 }
+
 
 " Устанавливаем cppreference.com как основной источник для C++
 let g:ref_source_web = 'cppreference'

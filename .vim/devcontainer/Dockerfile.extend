@@ -2,11 +2,16 @@ ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y software-properties-common && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN add-apt-repository --yes ppa:jonathonf/vim && \
+    apt-get update
+
+RUN apt-get install -y \
         vim \
         tmux \
         git \
         clangd \
         curl && \
     rm -rf /var/lib/apt/lists/*
-
