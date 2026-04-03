@@ -17,9 +17,10 @@ if [ "$BASE_IMAGE" = "null" ]; then
   exit 1
 fi
 
-TMP_DIR=$(mktemp -d)
+mkdir -p build/.devcontainer
+WS_DIR=build/.devcontainer
 
-cp ~/.vim/devcontainer/Dockerfile.extend "$TMP_DIR/"
+cp ~/.vim/devcontainer/Dockerfile.extend "$WS_DIR/"
 
 # Генерируем новый devcontainer.json
 jq \
@@ -29,14 +30,14 @@ jq \
   del(.image)
   + {
       build: {
-        dockerfile: "'$TMP_DIR'/Dockerfile.extend",
+        dockerfile: "Dockerfile.extend",
         args: {
           BASE_IMAGE: $baseImage
         }
       },
       mounts: (
         (.mounts // []) + [
-          "source=${localEnv:HOME}/.vim/ls-settings/clangd-config/.config,target=/home/'$REMOTE_USER'/.config,type=bind,readonly",
+          "source=${localEnv:HOME}/.vim/ls-settings/clangd-config/.config/clangd,target=/home/'$REMOTE_USER'/.config/clangd,type=bind,readonly",
           "source=${localEnv:HOME}/.vim/ls-settings/clangd-config/.clang-format,target=/home/'$REMOTE_USER'/.clang-format,type=bind,readonly",
           "source=${localEnv:HOME}/.vim/ls-settings/clangd-config/.clang-tidy,target=/home/'$REMOTE_USER'/.clang-tidy,type=bind,readonly",
           
@@ -53,26 +54,30 @@ jq \
       ),
       runArgs: (
         (.runArgs // []) + [
-          "-p", "8080:8080"
+          "-p", "8080",
+          "--dns", "8.8.8.8",
+          "--dns", "8.8.4.4"
         ]
-      ),
-      onCreateCommand: (
-        if .onCreateCommand then
-          .onCreateCommand + " && cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
-        else
-          "cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
-        end
       )
     }
   ' \
-  "$DEVCONTAINER_FILE" > "$TMP_DIR/devcontainer.json"
-
-ls "$TMP_DIR" -a
-cat "$TMP_DIR/devcontainer.json"
+  "$DEVCONTAINER_FILE" > "$WS_DIR/devcontainer.json"
+       #,
+      #postAttachCommand: (
+        #if .postAttachCommand then
+          #.postAttachCommand + " && cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON || true"
+        #else
+          #"cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON || true"
+        #end
+      #)
+      # Это было после runArgs, но я решил убрать, т. к. долго, + плохо работает (почему-то зависимости не подсасываются)
+      
+ls "$WS_DIR" -a
+cat "$WS_DIR/devcontainer.json"
 
 devcontainer up \
   --workspace-folder . \
-  --config "$TMP_DIR/devcontainer.json"
+  --config "$WS_DIR/devcontainer.json"
 
 echo ""
 echo -e "\033[0;32mDevcontainer successfuly started:\033[0m"
@@ -80,6 +85,6 @@ echo ""
 
 devcontainer exec \
   --workspace-folder . \
-  --config "$TMP_DIR/devcontainer.json" \
+  --config "$WS_DIR/devcontainer.json" \
   bash
 

@@ -10,6 +10,9 @@ Plug 'easymotion/vim-easymotion'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 
+" AI assistents (codeium in windsurf)
+Plug 'Exafunction/windsurf.vim', { 'branch': 'main' }
+
 " Online man
 Plug 'thinca/vim-ref'
 
@@ -41,6 +44,8 @@ set completeopt=menuone
     " создаст нам tags файл, после перезагрузки файла они подсосуться и можно будет
     " переходить <C-]> и выходить <C-t>
 set tags=./tags;,tags;
+    " Remove 'i' from :set path?
+set complete=.,w,b,u,t
     " Include paths for <C-x><C-i>
 set path+=**
 set path+=../include/**
@@ -65,6 +70,8 @@ nnoremap K  :LspHover<CR>
 nnoremap <leader>r :LspRename<CR>
 nnoremap <leader>a :LspCodeAction<CR>
 nnoremap <leader>f :LspDocumentFormat<CR>
+" Форматирование текущего файла через clang-format напрямую для cpp
+autocmd FileType cpp nnoremap <silent> <leader>f :w <bar> !clang-format -i %<CR>:e!<CR>
     " LSP diagnostics
 nnoremap <leader>e :LspNextDiagnostic<CR>
 nnoremap <leader>E :LspPreviousDiagnostic<CR>
@@ -72,6 +79,7 @@ nnoremap <leader>d :LspDocumentDiagnostics<CR>
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_diagnostics_highlights_enabled = 1
+let g:lsp_diagnostics_virtual_text_enabled = 0
   " Функция для перехода к текущей строке в зависимости от типа списка (после gr или <leader>q)
 function! SmartJumpToChosenOpt()
     let win_info = getwininfo(win_getid())[0]
@@ -85,6 +93,22 @@ function! SmartJumpToChosenOpt()
 endfunction
   " Переходить на выбранный вариант в quickfix или loclist
 nnoremap <silent> g<CR> :call SmartJumpToChosenOpt()<CR>
+
+" LSP Server для yaml файлов
+if executable('yaml-language-server')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'yaml-language-server',
+        \ 'cmd': {server_info->['yaml-language-server', '--stdio']},
+        \ 'whitelist': ['yaml'],
+        \ 'workspace_config': {
+        \   'yaml': {
+        \     'schemas': {
+        \       ['https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json']: 'docker-compose.yaml',
+        \     },
+        \   },
+        \ },
+        \ })
+endif
 
 
 " Устанавливаем cppreference.com как основной источник для C++
