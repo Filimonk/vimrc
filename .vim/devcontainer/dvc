@@ -43,6 +43,7 @@ jq \
           
           "source=${localEnv:HOME}/.vimrc,target=/home/'$REMOTE_USER'/.vimrc,type=bind,readonly",
           "source=${localEnv:HOME}/.vim,target=/home/'$REMOTE_USER'/.vim,type=bind,readonly",
+          "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,readonly",
           
           "source=${localEnv:HOME}/.tmux.conf,target=/home/'$REMOTE_USER'/.tmux.conf,type=bind,readonly",
           
@@ -53,6 +54,7 @@ jq \
       ),
       containerEnv: (
           (.containerEnv // {}) + {
+             "DISPLAY": "${localEnv:DISPLAY}",
              "TERM": "${localEnv:TERM}",
              "LANG": "C.UTF-8",
              "LC_ALL": "C.UTF-8"

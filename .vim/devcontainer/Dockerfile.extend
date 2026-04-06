@@ -5,12 +5,12 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     \
     add-apt-repository --yes ppa:jonathonf/vim && \
-    apt-get update && \
-    \
-    apt-get install -y \
+    apt-get update
+
+RUN apt-get install -y \
         vim-gtk3 \
+        xclip \
         tmux \
         git \
         clangd \
-        curl && \
-    rm -rf /var/lib/apt/lists/*
+        curl
