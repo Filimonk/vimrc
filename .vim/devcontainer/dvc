@@ -44,6 +44,8 @@ jq \
           "source=${localEnv:HOME}/.vimrc,target=/home/'$REMOTE_USER'/.vimrc,type=bind,readonly",
           "source=${localEnv:HOME}/.vim,target=/home/'$REMOTE_USER'/.vim,type=bind,readonly",
           
+          "source=${localEnv:HOME}/.tmux.conf,target=/home/'$REMOTE_USER'/.tmux.conf,type=bind,readonly",
+          
           "source=${localEnv:HOME}/.codeium,target=/home/'$REMOTE_USER'/.codeium,type=bind",
           
           "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
@@ -51,7 +53,9 @@ jq \
       ),
       containerEnv: (
           (.containerEnv // {}) + {
-             "TERM": "${localEnv:TERM}"
+             "TERM": "${localEnv:TERM}",
+             "LANG": "C.UTF-8",
+             "LC_ALL": "C.UTF-8"
           }
       ),
       runArgs: (
