@@ -16,6 +16,10 @@ CompileFlags:
     - -Iinclude
     - -I./include
     - -I../include
+    
+    # решение проблем с типами (и падением сервера)
+    - -D_Float16=__fp16
+    - -D__bf16=float
 
   Remove:
     - -Werror
