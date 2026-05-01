@@ -135,6 +135,8 @@ nnoremap o ox<BS>
 nnoremap O Ox<BS>
 nnoremap <cr> <cr>x<BS>
 
+nnoremap <C-s> :let @/ = '\<' . expand('<cword>') . '\>' <bar> call histadd('/', @/)<cr>
+
 autocmd filetype cpp nnoremap <F4> :w <bar> exec '!g++ '.shellescape('%').' -o '.shellescape('%:r').' -g3 &&  ./'.shellescape('%:r')<CR>
 autocmd FileType cpp nnoremap <F5> :exec '!gdb -q BuildCpp/'.shellescape('%:r').'.out'<CR>
 
