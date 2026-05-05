@@ -36,7 +36,16 @@ set smartindent
 set cindent
 set list lcs=tab:\|\
 
+set term=xterm-256color
 set title "отображает название файла вверху окна
+
+set number
+set relativenumber
+
+noremap j gj
+noremap k gk
+noremap gj j
+noremap gk k
 
 " completion sets
 set completeopt=menuone
