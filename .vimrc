@@ -42,11 +42,6 @@ set title "отображает название файла вверху окн�
 set number
 set relativenumber
 
-noremap j gj
-noremap k gk
-noremap gj j
-noremap gk k
-
 " completion sets
 set completeopt=menuone
     " ctags -R . 
